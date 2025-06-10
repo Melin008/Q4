@@ -1,0 +1,258 @@
+let container = document.querySelector(".container");
+ let keyboardBox = container.querySelector(".keyboard-box");
+ let wordSpotlight = container.querySelector(".guess-word .wordSpotlight");
+ let wrongGuessTxt = container.querySelector(".wrong-guess");
+ let maxWrongTxt = container.querySelector(".max-wrong");
+ let resultBox = container.querySelector(".result-box");
+ let gameBox = container.querySelector(".game-box");
+ let message = container.querySelector(".result-box .message");
+ let result_box_answer = container.querySelector(".result-box .result-answer");
+ let resetBtn = container.querySelector(".reset-btn");
+ let newGameBtn = container.querySelector(".result-box .new-game-btn");
+ let timerDisplay = document.querySelector(".timer");
+ let hintBtn = document.querySelector(".hint-btn");
+ let hintText = document.querySelector(".hint-text");
+ let hintElement = document.querySelector(".hint");
+ let startBox = document.querySelector('.start-box');
+ let startBtn = startBox.querySelector('.start-btn');
+
+const words = [
+     { word: 'COMPUTER', hint: 'An electronic device for processing data' },
+  { word: 'SCIENCE', hint: 'A systematic study of the natural world' },
+  { word: 'DEVELOPMENT', hint: 'The process of growth or progress' },
+  { word: 'MOUNTAIN', hint: 'A large natural elevation of the earth’s surface' },
+  { word: 'STRAIGHT', hint: 'Without a bend or curve' },
+  { word: 'WHITEBOARD', hint: 'Used for writing with markers' },
+  { word: 'EDUCATION', hint: 'Process of getting knowledge' },
+  { word: 'COMPETITION', hint: 'A contest, a prize' },
+  { word: 'WEBSITE', hint: 'A collection of related web pages' },
+  { word: 'LANGUAGE', hint: 'Method of communication using words' },
+  { word: 'BICYCLE', hint: 'A two-wheeled vehicle' },
+  { word: 'JOURNEY', hint: 'A long trip from one place to another'},
+  { word: 'COMMUNICATION', hint: 'It’s how people share messages and ideas with each other'},
+  { word: 'WRONG', hint: 'When something has an error'},
+  { word: 'OCEAN', hint: 'A body of salty water covering most of the Earth'},
+  { word: 'ILLUSION', hint: 'Something that tricks your eyes or mind into seeing what isn’t real'},
+  { word: 'ABSENCE', hint: 'When something or someone is not present'},
+  { word: 'DISTANCE', hint: 'How far something is'},
+  { word: 'PATTERN', hint: 'A design or shape that repeats'},
+  { word: 'APPEARANCE', hint: 'The way something looks on the outside'},
+  { word: 'REACTION', hint: 'What happens or how someone responds to something'},
+]
+
+ let answer = "";
+ let wordStatus = null;
+ let guessed = [];
+ let wrongGuess = 0;
+ let maxWrong = 6;
+ let currentHint = "";
+
+ let generateButtons =() =>{
+     let buttonWord = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').map(letter =>
+     `<button
+     class="keyboard-btn"
+     id="` + letter + `"
+     onclick="Guess('` + letter +`')">
+     ` + letter +`
+      </button>`
+      ).join('');
+
+       keyboardBox.innerHTML = buttonWord;
+       maxWrongTxt.innerHTML = maxWrong;
+ }
+
+
+ let generateRandomWord =() =>{
+    const randomPair = words[Math.floor(Math.random() * words.length)];
+  answer = randomPair.word;     
+  currentHint = randomPair.hint;
+   
+};
+
+
+let wordGuess =() =>{
+     wordStatus = answer.split('').map(letter => (guessed.indexOf(letter)>= 0 ? letter : "_")).join('');
+                                       
+                      
+     wordSpotlight.innerHTML = wordStatus;
+  
+
+}
+
+ let Guess =(choosenLetter) =>{
+     guessed.indexOf(choosenLetter)=== -1 ? guessed.push(choosenLetter): null;
+
+    document.getElementById(choosenLetter).setAttribute('disabled',true);
+    document.getElementById(choosenLetter).style.backgroundColor = "#F5F5F5";
+    document.getElementById(choosenLetter).style.border = "1px solid #808080";
+    document.getElementById(choosenLetter).style.color = "#808080";
+   
+  if(answer.indexOf(choosenLetter) >= 0){
+     wordGuess();
+     GameWon();
+ }else if (answer.indexOf(choosenLetter) === -1){
+      wrongGuess++;
+      updateWrongGuess();
+      hangmanUpdate();
+      GameLost();
+ 
+ }
+ 
+}
+ 
+let updateWrongGuess =() =>{
+    console.log(wrongGuess);
+    wrongGuessTxt.innerHTML = wrongGuess;
+    
+}
+  
+let hangmanUpdate = () =>{
+  switch(wrongGuess){
+    case 1:
+      document.querySelector(".face").style.display = "block"; 
+      break; 
+        case 2:
+      document.querySelector(".stomach").style.display = "block"; 
+      break; 
+        case 3:
+      document.querySelector(".hand-one").style.display = "block"; 
+      break; 
+        case 4:
+      document.querySelector(".hand-two").style.display = "block"; 
+      break; 
+        case 5:
+      document.querySelector("#leg-one").style.display = "block"; 
+      break; 
+        case 6:
+      document.querySelector("#leg-two").style.display = "block"; 
+      break; 
+      
+  }
+  
+}
+
+let GameWon = () =>{
+    if (wordStatus === answer) {
+    resultBox.style.display = "block";
+    gameBox.style.display = "none";
+    message.innerHTML = "You Win!";
+    message.style.color = "#ADD8E6";
+    result_box_answer.innerHTML = answer;
+   
+  }
+  
+
+}
+
+
+let GameLost =() =>{
+    if (wrongGuess === maxWrong) {
+    resultBox.style.display = "block";
+    gameBox.style.display = "none";
+    message.innerHTML = "You Lose!";
+    message.style.color = "#FF0000";
+    result_box_answer.innerHTML = answer;
+  }
+}
+startBtn.addEventListener('click', () => {
+  startBox.style.display = 'none';    
+  container.style.display = 'block';
+  gameBox.style.display = 'block';    
+  resultBox.style.display = 'none';  
+  resetGame();                         
+});
+
+let timerInterval;
+let timeLeft = 180; 
+let timeDisplay = document.querySelector(".time-left");
+
+let startTimer = () => {
+  clearInterval(timerInterval);
+  timeLeft = 180;
+  updateTimeDisplay();
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimeDisplay();
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      TimeOut();
+    }
+  }, 1000);
+};
+
+let updateTimeDisplay = () => {
+  let minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+  let seconds = String(timeLeft % 60).padStart(2, '0');
+  timeDisplay.textContent = `${minutes}:${seconds}`;
+};
+
+let TimeOut = () => {
+  resultBox.style.display = "block";
+  gameBox.style.display = "none";
+  message.innerHTML = "Time's Up!";
+  message.style.color = "#FF8C00";
+  result_box_answer.innerHTML = answer;
+};
+
+let resetGame =() =>{
+    wrongGuess = 0;
+    guessed = [];
+    generateRandomWord();
+    wordGuess();
+    hangmanUpdate();
+    updateWrongGuess();
+    generateButtons();
+    startTimer();
+    
+  
+     document.querySelector(".face").style.display = "none"; 
+     document.querySelector(".stomach").style.display = "none"; 
+     document.querySelector(".hand-one").style.display = "none"; 
+     document.querySelector(".hand-two").style.display = "none"; 
+     document.querySelector("#leg-one").style.display = "none"; 
+     document.querySelector("#leg-two").style.display = "none"; 
+
+ hintText.style.display = "none";
+  hintBtn.style.display = "inline-block";
+
+  startTimer();
+}
+
+let newGame =() =>{
+    resultBox.style.display = "none";
+    gameBox.style.display = "block";
+    resetGame();
+}
+
+hintBtn.addEventListener("click", () => {
+  hintText.style.display = "block";
+  hintElement.innerText = currentHint;
+  hintBtn.style.display = "none"; 
+});
+
+resetBtn.addEventListener("click", resetGame);
+newGameBtn.addEventListener("click", newGame);
+document.addEventListener("keydown", (e) => {
+  let letter = e.key.toUpperCase();
+  if (/^[A-Z]$/.test(letter)) {
+    Guess(letter);
+    
+  }
+});
+
+
+document.querySelector(".start-btn").addEventListener("click", () => {
+  document.querySelector(".start-screen").style.display = "none";
+  container.style.display = "block";
+  resetGame();
+});
+
+
+generateButtons();
+generateRandomWord();
+wordGuess();
+hintElement.innerHTML = currentHint;
+startTimer();
+resetGame();
