@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang = "en">
+  
+  <head>
+      <meta charset="UTF-8">
+      <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+      <title>Hangman</title>
+      <link rel="stylesheet" href="style.css">
+      <script src="hangman.js"></script>
+
+
+  </head>
+  <body>
+   <div class="start-box">
+    <h1>Welcome to Hangman</h1>
+    <button class="start-btn">Start Game</button>
+  </div>
+
+  <div class="container" style="display: none;">
+     <div class="game-box">
+        <span class="wrong-guesses">Wrong Guesses:
+         <span class="wrong-guess">0</span> of
+         <span class="max-wrong">6</span>
+         <span class="timer">Time Left: <span class="time-left">03:00</span></span>
+       </span>
+        <button class="reset-btn">Reset</button>
+         <div class="hangman-body">
+          <span class="base"></span>
+          <span class="pillar"></span>
+          <span></span>
+          <span></span>
+          <span class="face"></span>
+          <span class="stomach"></span>
+          <span class="hand-one"></span>
+          <span class="hand-two"></span>
+          <span id="leg-one"></span>
+          <span id="leg-two"></span>
+  </div>
+  <div class="guess-word">
+      <p>Guess the word</p>
+      <span class="wordSpotlight"></span>
+  </div>
+     <div class="keyboard-box"></div>
+     <button class="hint-btn">Show Hint</button>
+<p class="hint-text" style="display: none;">Hint: <span class="hint"></span></p>
+ </div>
+     <div class="result-box">
+         <h1 class="message">You Win!</h1>
+         <h3>The word was <span class="result-answer">Computer</span></h3>
+         <button class="new-game-btn">NEW GAME</button>
+</div>
+  
+
+ </body>
+</html>
+
